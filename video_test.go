@@ -27,6 +27,31 @@ func ExampleClient_GetStream() {
 	reader.Close()
 }
 
+func TestExtractVideoId(t *testing.T) {
+	testcases := []struct {
+		input      string
+		expectedID string
+	}{
+		{
+			input:      "https://www.youtube.com/watch?v=9_MbW9FK1fA",
+			expectedID: "9_MbW9FK1fA",
+		},
+		{
+			input:      "https://www.youtube.com/watch?v=-D2IEZbn5Xs&list=PLQUru4nFApg_ocT-XYXFg50_l4V2BRtwi&index=15",
+			expectedID: "-D2IEZbn5Xs",
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.input, func(t *testing.T) {
+			id, err := ExtractVideoID(tc.input)
+			require.NoError(t, err)
+			require.Equal(t, tc.expectedID, id)
+		})
+	}
+
+}
+
 func TestSimpleTest(t *testing.T) {
 	video, err := testClient.GetVideo("https://www.youtube.com/watch?v=9_MbW9FK1fA")
 	require.NoError(t, err, "get body")
