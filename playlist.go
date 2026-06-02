@@ -229,10 +229,10 @@ type videosJSONExtractor struct {
 }
 
 func (vje videosJSONExtractor) PlaylistEntry() *PlaylistEntry {
-	ds, err := strconv.Atoi(vje.Renderer.Duration)
-	if err != nil {
-		panic("invalid video duration: " + vje.Renderer.Duration)
-	}
+	// A live, premiere, or unavailable (private/deleted) playlist entry has no
+	// lengthSeconds. Parse leniently (0 when absent) rather than panicking, so a
+	// single such entry doesn't abort parsing of the whole playlist.
+	ds, _ := strconv.Atoi(vje.Renderer.Duration)
 	return &PlaylistEntry{
 		ID:         vje.Renderer.ID,
 		Title:      vje.Renderer.Title.String(),
